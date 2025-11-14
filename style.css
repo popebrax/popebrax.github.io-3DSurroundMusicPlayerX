@@ -16,10 +16,51 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* --- Tab Styles --- */
+.tabs {
+    display: flex;
+    justify-content: flex-start;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background-color: transparent;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #666;
+    outline: none;
+    transition: color 0.3s, border-bottom 0.3s;
+    margin-right: 5px;
+}
+
+.tab-button:hover:not(.active) {
+    color: #000;
+}
+
+.tab-button.active {
+    color: #007bff;
+    border-bottom: 3px solid #007bff;
+    font-weight: bold;
+}
+
+/* Hide/Show Content */
+.content-panel {
+    display: none;
+    padding-top: 10px;
+}
+
+.content-panel.active {
+    display: block;
+}
+/* --- End Tab Styles --- */
+
+/* Existing styles (main content) */
 header {
     text-align: center;
     padding-bottom: 20px;
-    border-bottom: 2px solid #ddd;
 }
 
 header h1 {
@@ -54,6 +95,7 @@ a:hover {
     text-decoration: underline;
 }
 
+/* Footer position is now outside the content-panels */
 footer {
     text-align: center;
     margin-top: 20px;
