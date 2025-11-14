@@ -10,8 +10,8 @@
 
     <div class="container" id="policy-container">
         <div class="tabs">
-            <button class="tab-button active" onclick="showContent('privacy')">Privacy Policy</button>
-            <button class="tab-button" onclick="showContent('dsr')">Data Subject Rights</button>
+            <button class="tab-button active" onclick="showContent('privacy', true)">Privacy Policy</button>
+            <button class="tab-button" onclick="showContent('dsr', true)">Data Subject Rights</button>
         </div>
         <div id="privacy-content" class="content-panel active">
             <header>
@@ -116,10 +116,17 @@
     </div>
 
     <script>
-        function showContent(contentId) {
-            // Get all content panels and buttons
+        /**
+         * Switches the content panel and updates the URL hash without reloading the page.
+         * @param {string} contentId - The ID prefix of the content to show ('privacy' or 'dsr').
+         * @param {boolean} updateHistory - Whether to push a new state to the browser history.
+         */
+        function showContent(contentId, updateHistory = false) {
             const panels = document.querySelectorAll('.content-panel');
             const buttons = document.querySelectorAll('.tab-button');
+            const targetButtonIndex = (contentId === 'privacy') ? 0 : 1;
+            const newHash = (contentId === 'privacy') ? '' : '#' + contentId;
+            const newTitle = (contentId === 'privacy' ? 'Privacy Policy' : 'Data Subject Rights') + ' - 3D Surround Music Player X';
 
             // Hide all panels and deactivate all buttons
             panels.forEach(panel => panel.classList.remove('active'));
@@ -127,24 +134,39 @@
 
             // Show the selected panel and activate the corresponding button
             document.getElementById(contentId + '-content').classList.add('active');
-            
-            // Find the button that corresponds to the contentId (e.g., 'privacy' maps to button 0, 'dsr' maps to button 1)
-            const buttonIndex = contentId === 'privacy' ? 0 : 1;
-            buttons[buttonIndex].classList.add('active');
+            buttons[targetButtonIndex].classList.add('active');
             
             // Update the document title dynamically
-            document.title = (contentId === 'privacy' ? 'Privacy Policy' : 'Data Subject Rights') + ' - 3D Surround Music Player X';
+            document.title = newTitle;
+            
+            // Update the URL without reloading the page
+            if (updateHistory) {
+                // If switching back to privacy, replace the current state to remove '#dsr'
+                if (contentId === 'privacy') {
+                    window.history.replaceState(null, newTitle, window.location.pathname);
+                } else {
+                    // Otherwise, push the new hash for DSR
+                    window.history.pushState(null, newTitle, newHash);
+                }
+            }
         }
 
-        // Set the initial state based on the URL hash if needed (e.g., index.html#dsr)
-        window.onload = function() {
-            const hash = window.location.hash.substring(1); // Remove '#'
+        // Handles initial load and browser back/forward buttons
+        function handleLocationChange() {
+            const hash = window.location.hash.substring(1).toLowerCase(); // Remove '#'
             if (hash === 'dsr') {
                 showContent('dsr');
             } else {
-                showContent('privacy'); // Default
+                showContent('privacy'); 
             }
-        };
+        }
+
+        // 1. Initial page load
+        window.onload = handleLocationChange;
+        
+        // 2. Handle browser back/forward buttons
+        window.addEventListener('popstate', handleLocationChange);
+        
     </script>
 
 </body>
